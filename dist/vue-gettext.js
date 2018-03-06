@@ -553,7 +553,7 @@ interpolate.INTERPOLATION_PREFIX = '%{';
 var updateTranslation = function (el, binding, vnode) {
 
   var attrs = vnode.data.attrs || {};
-  var msgid = el.dataset.msgid;
+  var msgid = el.getAttribute('data-msgid');
   var translateContext = attrs['translate-context'];
   var translateN = attrs['translate-n'];
   var translatePlural = attrs['translate-plural'];
@@ -577,7 +577,7 @@ var updateTranslation = function (el, binding, vnode) {
     translateN,
     translateContext,
     isPlural ? translatePlural : null,
-    el.dataset.currentLanguage
+    el.getAttribute('data-currentLanguage')
   );
 
   var msg = interpolate(translation, context);
@@ -615,11 +615,11 @@ var Directive = {
 
     // Get the raw HTML and store it in the element's dataset (as advised in Vue's official guide).
     // Note: not trimming the content here as it should be picked up as-is by the extractor.
-    var msgid = el.innerHTML;
-    el.dataset.msgid = msgid;
+    var msgid = el.innerHTML || el.firstChild.data;
+    el.setAttribute('data-msgid', msgid);
 
     // Store the current language in the element's dataset.
-    el.dataset.currentLanguage = _Vue.config.language;
+    el.setAttribute('data-currentLanguage', _Vue.config.language);
 
     // Output a info in the console if an interpolation is required but no expression is provided.
     if (!_Vue.config.getTextPluginSilent) {
@@ -638,8 +638,8 @@ var Directive = {
     var doUpdate = false;
 
     // Trigger an update if the language has changed.
-    if (el.dataset.currentLanguage !== _Vue.config.language) {
-      el.dataset.currentLanguage = _Vue.config.language;
+    if (el.getAttribute('data-currentLanguage') !== _Vue.config.language) {
+      el.setAttribute('data-currentLanguage', _Vue.config.language);
       doUpdate = true;
     }
 
